@@ -288,3 +288,24 @@ INDEL   PASS            9         6         3           11         1          4 
   SNP    ALL          287       275        12          314         6         33      3      2       0.958188          0.978648        0.105096          0.96831                   4.125                3.984127                   1.141791                   1.093333
   SNP   PASS          287       275        12          314         6         33      3      2       0.958188          0.978648        0.105096          0.96831                   4.125                3.984127                   1.141791                   1.093333
 ```
+
+**Images:**
+
+```
+INPUT_DIR="${PWD}/data"
+OUTPUT_DIR="${PWD}/output"
+BIN_VERSION="1.5.0"
+sudo docker run
+    -v "${INPUT_DIR}":"/input"
+    -v "${OUTPUT_DIR}":"/output"
+    google/deepvariant:"${BIN_VERSION}"
+    /opt/deepvariant/bin/show_examples
+    --examples=/output/intermediate_results_dir/make_examples.tfrecord-00000-of-00024.gz
+    --example_info_json=/output/intermediate_results_dir/make_examples.tfrecord-00000-of-00024.gz.example_info.json
+    --output=/output/pileup
+```
+I think the ```-v "${INPUT_DIR}":"/input"``` is not needed here, will test
+
+what about when I have many tfrecord files
+
+og tutorial has another flag of ```--num_records=20``` what does it do and is it needed?
