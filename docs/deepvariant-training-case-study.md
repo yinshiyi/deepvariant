@@ -30,22 +30,21 @@ this tutorial were done serially with no pipeline optimization.
 ## Request a machine
 
 For this case study, we use a [GPU machine] with 16 vCPUs. You can request this
-machine on Google Cloud using the following command:
+machine on AWS using the following command:
 
 ```bash
-host="${USER}-deepvariant-vm"
-zone="us-west1-b"
-
-gcloud compute instances create ${host} \
-    --scopes "compute-rw,storage-full,cloud-platform" \
-    --maintenance-policy "TERMINATE" \
-    --accelerator=type=nvidia-tesla-p100,count=1 \
-    --image-family "ubuntu-2004-lts" \
-    --image-project "ubuntu-os-cloud" \
-    --machine-type "n1-standard-16" \
-    --boot-disk-size "300" \
-    --zone "${zone}" \
-    --min-cpu-platform "Intel Skylake"
+# public.ecr.aws/aws-genomics/google/deepvariant:1.4.0
+# https://cloud-images.ubuntu.com/locator/ec2/
+aws ec2 run-instances \
+    --image-id ami-0c272455b0778ebeb \ # Replace with the correct AMI ID for Ubuntu 20.04 LTS in your region
+    --count 1 \
+    --instance-type p3.2xlarge \ # p3 instances use Nvidia Tesla V100 GPUs, which is close to the Tesla P100
+    --key-name MyKeyPair \ # Replace with your key pair name
+    --block-device-mappings DeviceName=/dev/sda1,Ebs={VolumeSize=300} \
+    --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value='"${USER}-deepvariant-vm"'}]' \
+    --region us-west-2 \
+    --iam-instance-profile Name=MyIAMRole \ # Replace with your IAM instance profile if needed
+    --placement AvailabilityZone=us-west-2b 
 ```
 
 After a minute or two, your VM should be ready and you can ssh into it using the
