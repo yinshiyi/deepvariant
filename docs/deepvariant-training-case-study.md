@@ -27,6 +27,17 @@ accuracy comparing to the WGS model as a baseline:
 This tutorial is meant as an example for training; all the other processing in
 this tutorial were done serially with no pipeline optimization.
 
+## bam processing
+Since PicoV3 is very low coverage, we need to only take the Bam files regions that have enough coverage >2
+Using Bed file or something like that
+Learn from the Pacbio examples
+
+First set up AWS deepvariant
+
+Collect the bams files with ground truth data available.
+Do variant calling using the generalized model first to see the performance on the regions that have coverage >2
+Then see if we could improve on that
+
 ## Request a machine
 
 For this case study, we use a [GPU machine] with 16 vCPUs. You can request this
