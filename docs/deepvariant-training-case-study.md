@@ -27,25 +27,64 @@ accuracy comparing to the WGS model as a baseline:
 This tutorial is meant as an example for training; all the other processing in
 this tutorial were done serially with no pipeline optimization.
 
+## bam processing
+Since PicoV3 is very low coverage, we need to only take the Bam files regions that have enough coverage >2,
+it make sense at least 3 reads to vote to have a majority
+Using Bed file or something like that
+Learn from the Pacbio examples
+
+First set up AWS deepvariant
+
+Collect the bams files with ground truth data available.
+Do variant calling using the generalized model first to see the performance on the regions that have coverage >2
+Then see if we could improve on that
+
+```bash
+BAM_CHR1="${DATA_DIR}/BGISEQ_PE100_NA12878.sorted.chr1.bam"
+BAM_CHR20="${DATA_DIR}/BGISEQ_PE100_NA12878.sorted.chr20.bam"
+BAM_CHR21="${DATA_DIR}/BGISEQ_PE100_NA12878.sorted.chr21.bam"
+merged_bam="merged.bam"
+mininum_coverage=2
+coverage_bed="pass_threshold.bed"
+# why do we need this bed file?
+TRUTH_BED="${DATA_DIR}/HG001_GRCh37_GIAB_highconf_CG-IllFB-IllGATKHC-Ion-10X-SOLID_CHROM1-X_v.3.3.2_highconf_nosomaticdel_chr.bed"
+# https://bedtools.readthedocs.io/en/latest/content/tools/genomecov.html
+samtools merge $merged_bam $BAM_CHR1 $BAM_CHR20 $BAM_CHR21
+bedtools genomecov -ibam $merged_bam -bg | \
+    awk -v min_cov="$minimum_coverage" '$4 > min_cov {print $1, $2, $3}' | \
+    bedtools intersect -a $TRUTH_BED -b - > $coverage_bed
+```
+
 ## Request a machine
 
 For this case study, we use a [GPU machine] with 16 vCPUs. You can request this
-machine on Google Cloud using the following command:
+machine on AWS using the following command:
 
 ```bash
-host="${USER}-deepvariant-vm"
-zone="us-west1-b"
-
-gcloud compute instances create ${host} \
-    --scopes "compute-rw,storage-full,cloud-platform" \
-    --maintenance-policy "TERMINATE" \
-    --accelerator=type=nvidia-tesla-p100,count=1 \
-    --image-family "ubuntu-2004-lts" \
-    --image-project "ubuntu-os-cloud" \
-    --machine-type "n1-standard-16" \
-    --boot-disk-size "300" \
-    --zone "${zone}" \
-    --min-cpu-platform "Intel Skylake"
+# public.ecr.aws/aws-genomics/google/deepvariant:1.4.0
+# https://cloud-images.ubuntu.com/locator/ec2/
+aws ec2 run-instances \
+    --image-id ami-0c272455b0778ebeb \ # Replace with the correct AMI ID for Ubuntu 20.04 LTS in your region
+    --count 1 \
+    --instance-type p3.2xlarge \ # p3 instances use Nvidia Tesla V100 GPUs, which is close to the Tesla P100
+    --key-name MyKeyPair \ # Replace with your key pair name
+    --block-device-mappings DeviceName=/dev/sda1,Ebs={VolumeSize=300} \
+    --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value='"${USER}-deepvariant-vm"'}]' \
+    --region us-west-2 \
+    --iam-instance-profile Name=gpu
+    --placement AvailabilityZone=us-west-2b 
+```
+```bash
+aws ec2 run-instances \
+    --image-id ami-0c272455b0778ebeb \ # Replace with the correct AMI ID for Ubuntu 20.04 LTS in your region
+    --count 1 \
+    --instance-type \ # just get a small instance to try it out first
+    --key-name MyKeyPair \ # Replace with your key pair name
+    --block-device-mappings DeviceName=/dev/sda1,Ebs={VolumeSize=300} \
+    --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value='"${USER}-deepvariant-vm"'}]' \
+    --region us-west-2 \
+    --iam-instance-profile Name=gpu
+    --placement AvailabilityZone=us-west-2b 
 ```
 
 After a minute or two, your VM should be ready and you can ssh into it using the
@@ -60,7 +99,7 @@ Once you have logged in, set the variables:
 ```bash
 YOUR_PROJECT=REPLACE_WITH_YOUR_PROJECT
 OUTPUT_GCS_BUCKET=REPLACE_WITH_YOUR_GCS_BUCKET
-
+# might have to install gsutil to make sure the instance connect to deepvariant's standard files
 BUCKET="gs://deepvariant"
 VERSION="1.6.1"
 DOCKER_IMAGE="google/deepvariant:${VERSION}"
@@ -538,7 +577,7 @@ time sudo docker run -it \
 jmcdani20/hap.py:v0.3.12 /opt/hap.py/bin/hap.py \
   "${TRUTH_VCF}" \
   "${OUTPUT_DIR}/test_set.vcf.gz" \
-  -f "${TRUTH_BED}" \
+  -f "${TRUTH_BED}" \ # this is important in my study to make sure coverage >2
   -r "${REF}" \
   -o "${OUTPUT_DIR}/chr20-calling.happy.output" \
   -l chr20 \
@@ -588,7 +627,7 @@ sudo docker run --gpus all \
   --output_vcf "${OUTPUT_DIR}/baseline.vcf.gz" \
   --num_shards=${N_SHARDS}
 ```
-
+baseline vcf run happy
 Baseline:
 
 | Type  | TRUTH.TP | TRUTH.FN | QUERY.FP | METRIC.Recall | METRIC.Precision | METRIC.F1_Score |
