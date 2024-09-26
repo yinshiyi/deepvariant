@@ -78,15 +78,26 @@ aws ec2 run-instances \
 aws ec2 run-instances \
     --image-id ami-0c272455b0778ebeb \ # Replace with the correct AMI ID for Ubuntu 20.04 LTS in your region
     --count 1 \
-    --instance-type \ # just get a small instance to try it out first
-    --key-name MyKeyPair \ # Replace with your key pair name
-    --block-device-mappings DeviceName=/dev/sda1,Ebs={VolumeSize=300} \
+    --instance-type t4g.small \ # just get a small instance to try it out first
+    --key-name gpu \ # Replace with your key pair name
+    --block-device-mappings DeviceName=/dev/sda1,Ebs={VolumeSize=20} \
     --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value='"${USER}-deepvariant-vm"'}]' \
     --region us-west-2 \
     --iam-instance-profile Name=gpu
     --placement AvailabilityZone=us-west-2b 
 ```
-
+```bash
+# this actually works
+aws ec2 run-instances \
+    --image-id ami-096ea6a12ea24a797 \
+    --count 1 \
+    --instance-type t4g.small \
+    --key-name gpu \
+    --block-device-mappings DeviceName=/dev/sda1,Ebs={VolumeSize=20} \
+    --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value='"${USER}-deepvariant-vm"'}]' \
+    --region us-east-1 \
+    --profile gpu
+```
 After a minute or two, your VM should be ready and you can ssh into it using the
 following command:
 
