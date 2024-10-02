@@ -88,21 +88,25 @@ aws ec2 run-instances \
 ```
 ```bash
 # this actually works
+host="${USER}-deepvariant-vm"
+region="us-east-1"
+chmod 400 ~/gpu.pem
 aws ec2 run-instances \
     --image-id ami-096ea6a12ea24a797 \
     --count 1 \
     --instance-type t4g.small \
     --key-name gpu \
     --block-device-mappings DeviceName=/dev/sda1,Ebs={VolumeSize=20} \
-    --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value='"${USER}-deepvariant-vm"'}]' \
-    --region us-east-1 \
+    --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value='"${host}"'}]' \
+    --region $region \
     --profile gpu
 ```
 After a minute or two, your VM should be ready and you can ssh into it using the
 following command:
 
 ```bash
-gcloud compute ssh ${host} --zone ${zone}
+ssh -i "~/gpu.pem" ubuntu@ec2-3-91-223-18.compute-1.amazonaws.com
+# ssh -i ~/gpu.pem ubuntu@${host}
 ```
 
 Once you have logged in, set the variables:
