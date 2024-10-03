@@ -106,8 +106,10 @@ After a minute or two, your VM should be ready and you can ssh into it using the
 following command:
 
 ```bash
-stop-instances --instance-ids i-0e4f059f74edbb771 -profile gpu
-ssh -i "~/gpu.pem" ubuntu@ec2-3-91-223-18.compute-1.amazonaws.com
+aws ec2 stop-instances --instance-ids i-0e4f059f74edbb771 -profile gpu
+# elastic IP
+ssh -i "~/gpu.pem" ubuntu@54.156.141.144
+ssh gpu
 # ssh -i ~/gpu.pem ubuntu@${host}
 ```
 

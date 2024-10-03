@@ -1,3 +1,5 @@
+amd64 architecture, but your machine is running an arm64 architecture
+
 YOUR_PROJECT=takara
 OUTPUT_GCS_BUCKET=REPLACE_WITH_YOUR_GCS_BUCKET
 # might have to install gsutil to make sure the instance connect to deepvariant's standard files
@@ -30,26 +32,20 @@ TRUTH_BED="${DATA_DIR}/HG001_GRCh37_GIAB_highconf_CG-IllFB-IllGATKHC-Ion-10X-SOL
 
 N_SHARDS=16
 
-mkdir -p "${OUTPUT_DIR}"
-mkdir -p "${BIN_DIR}"
-mkdir -p "${DATA_DIR}"
-mkdir -p "${LOG_DIR}"
 
-gsutil -m cp ${DATA_BUCKET}/BGISEQ_PE100_NA12878.sorted.chr*.bam* "${DATA_DIR}"
-gsutil -m cp -r "${DATA_BUCKET}/ucsc_hg19.fa*" "${DATA_DIR}"
-gsutil -m cp -r "${DATA_BUCKET}/HG001_GRCh37_GIAB_highconf_CG-IllFB-IllGATKHC-Ion-10X-SOLID_CHROM1-X_v.3.3.2_highconf_*" "${DATA_DIR}"
-
-docker pull ${DOCKER_IMAGE}     # Standard CPU Docker Image.
-# install gsutil
-curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
-echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-sudo apt-get update && sudo apt-get install google-cloud-cli
-# install docker
-sudo apt-get install docker.io -y
-sudo systemctl start docker
-sudo docker run hello-world
-sudo systemctl enable docker
-sudo usermod -a -G docker $(whoami)
-newgrp docker
-
-
+( time seq 0 $((N_SHARDS-1)) | \
+  parallel --halt 2 --line-buffer \
+    sudo docker run \
+      -v ${HOME}:${HOME} \
+      ${DOCKER_IMAGE} \
+      make_examples \
+      --mode training \
+      --ref "${REF}" \
+      --reads "${BAM_CHR1}" \
+      --examples "${OUTPUT_DIR}/training_set.with_label.tfrecord@${N_SHARDS}.gz" \
+      --truth_variants "${TRUTH_VCF}" \
+      --confident_regions "${TRUTH_BED}" \
+      --task {} \
+      --regions "'chr1'" \
+      --channels "insert_size" \
+) 2>&1 | tee "${LOG_DIR}/training_set.with_label.make_examples.log"
