@@ -44,6 +44,9 @@ docker pull ${DOCKER_IMAGE}     # Standard CPU Docker Image.
 curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
 echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
 sudo apt-get update && sudo apt-get install google-cloud-cli
+# install parallel
+sudo apt -y update
+sudo apt -y install parallel
 # install docker
 sudo apt-get install docker.io -y
 sudo systemctl start docker
@@ -51,5 +54,9 @@ sudo docker run hello-world
 sudo systemctl enable docker
 sudo usermod -a -G docker $(whoami)
 newgrp docker
+# mount dev
+mkdir /home/ubuntu/data/
+sudo mount /dev/nvme1n1 /home/ubuntu/data/
+
 
 

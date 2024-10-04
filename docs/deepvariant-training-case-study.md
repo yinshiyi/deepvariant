@@ -91,6 +91,7 @@ aws ec2 run-instances \
 host="${USER}-deepvariant-vm"
 region="us-east-1"
 chmod 400 ~/gpu.pem
+# this image id is not right
 aws ec2 run-instances \
     --image-id ami-096ea6a12ea24a797 \
     --count 1 \
