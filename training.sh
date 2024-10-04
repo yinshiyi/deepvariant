@@ -11,7 +11,7 @@ GCS_PRETRAINED_WGS_MODEL="${MODEL_BUCKET}/model.ckpt"
 OUTPUT_BUCKET="${OUTPUT_GCS_BUCKET}/customized_training"
 TRAINING_DIR="${OUTPUT_BUCKET}/training_dir"
 
-BASE="/data/training-case-study"
+BASE="/home/ubuntu/data/training-case-study"
 DATA_BUCKET=gs://deepvariant/training-case-study/BGISEQ-HG001
 
 INPUT_DIR="${BASE}/input"

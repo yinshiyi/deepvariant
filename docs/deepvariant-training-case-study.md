@@ -171,6 +171,8 @@ gsutil -m cp -r "${DATA_BUCKET}/HG001_GRCh37_GIAB_highconf_CG-IllFB-IllGATKHC-Io
 ### Download extra packages
 
 ```bash
+snap install gh
+gh auth login
 sudo apt -y update
 sudo apt -y install parallel
 curl -O https://raw.githubusercontent.com/google/deepvariant/r1.6.1/scripts/install_nvidia_docker.sh

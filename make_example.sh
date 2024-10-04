@@ -1,4 +1,4 @@
-amd64 architecture, but your machine is running an arm64 architecture
+# amd64 architecture, but your machine is running an arm64 architecture
 
 YOUR_PROJECT=takara
 OUTPUT_GCS_BUCKET=REPLACE_WITH_YOUR_GCS_BUCKET
@@ -13,13 +13,13 @@ GCS_PRETRAINED_WGS_MODEL="${MODEL_BUCKET}/model.ckpt"
 OUTPUT_BUCKET="${OUTPUT_GCS_BUCKET}/customized_training"
 TRAINING_DIR="${OUTPUT_BUCKET}/training_dir"
 
-BASE="/data/training-case-study"
+BASE="/home/ubuntu/data/training-case-study"
 DATA_BUCKET=gs://deepvariant/training-case-study/BGISEQ-HG001
 
 INPUT_DIR="${BASE}/input"
 BIN_DIR="${INPUT_DIR}/bin"
 DATA_DIR="${INPUT_DIR}/data"
-OUTPUT_DIR="${BASE}/output"
+OUTPUT_DIR="${BASE}/output2"
 LOG_DIR="${OUTPUT_DIR}/logs"
 SHUFFLE_SCRIPT_DIR="${HOME}/deepvariant/tools"
 
@@ -30,8 +30,11 @@ BAM_CHR21="${DATA_DIR}/BGISEQ_PE100_NA12878.sorted.chr21.bam"
 TRUTH_VCF="${DATA_DIR}/HG001_GRCh37_GIAB_highconf_CG-IllFB-IllGATKHC-Ion-10X-SOLID_CHROM1-X_v.3.3.2_highconf_PGandRTGphasetransfer_chrs_FIXED.vcf.gz"
 TRUTH_BED="${DATA_DIR}/HG001_GRCh37_GIAB_highconf_CG-IllFB-IllGATKHC-Ion-10X-SOLID_CHROM1-X_v.3.3.2_highconf_nosomaticdel_chr.bed"
 
-N_SHARDS=16
-
+N_SHARDS=2
+mkdir -p "${OUTPUT_DIR}"
+mkdir -p "${BIN_DIR}"
+mkdir -p "${DATA_DIR}"
+mkdir -p "${LOG_DIR}"
 
 ( time seq 0 $((N_SHARDS-1)) | \
   parallel --halt 2 --line-buffer \
