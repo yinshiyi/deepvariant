@@ -1,3 +1,10 @@
+#
+# git clone https://github.com/apache/beam-starter-python.git
+# cd beam-starter-python
+# python3 -m venv env
+# source env/bin/activate
+# python3 -m pip install snappy
+# source ../beam-starter-python/shiyi/bin/activate
 YOUR_PROJECT=takara
 BASE="/home/syin/lol/data/training-case-study"
 OUTPUT_DIR="${BASE}/output2"
@@ -9,4 +16,4 @@ time python3 tools/shuffle_tfrecords_beam.py \
   --output_dataset_config_pbtxt="${OUTPUT_DIR}/training_set.dataset_config.pbtxt" \
   --job_name=shuffle-tfrecords \
   --runner=DirectRunner \
-  --direct_num_workers=0
+  --direct_num_workers=32
