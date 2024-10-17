@@ -3,6 +3,13 @@
 # cd beam-starter-python
 # python3 -m venv env
 # source env/bin/activate
+
+# pip3 install setuptools --upgrade
+# pip3 install apache_beam # installed 2.59.0
+# pip3 install tensorflow  # For parsing tf.Example in shuffle_tfrecords_beam.py.
+
+# play around with snappy will make it crash in local server
+# python-snappy
 # python3 -m pip install snappy
 # source ../beam-starter-python/shiyi/bin/activate
 YOUR_PROJECT=takara
