@@ -9,4 +9,4 @@ time python3 tools/shuffle_tfrecords_beam.py \
   --output_dataset_config_pbtxt="${OUTPUT_DIR}/validation_set.dataset_config.pbtxt" \
   --job_name=shuffle-tfrecords \
   --runner=DirectRunner \
-  --direct_num_workers=0
+  --direct_num_workers=7
