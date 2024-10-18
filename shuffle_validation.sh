@@ -1,5 +1,5 @@
 YOUR_PROJECT=takara
-BASE="/home/ubuntu/data/training-case-study"
+BASE="/home/syin/lol/data/training-case-study"
 OUTPUT_DIR="${BASE}/output"
 time python3 tools/shuffle_tfrecords_beam.py \
   --project="${YOUR_PROJECT}" \
