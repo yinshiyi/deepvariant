@@ -29,7 +29,7 @@ gsutil cp $GCS_PRETRAINED_WGS_MODEL data/model.ckpt
 
 BASE="/home/${USER}/data/training-case-study"
 OUTPUT_DIR="${BASE}/output"
-model="/home/${USER}/data/model.ckpt"
+model="/home/${USER}/data/model/model.ckpt"
 TRAINING_DIR="${OUTPUT_DIR}/training_dir"
 BIN_VERSION="1.4.0"
 LOG_DIR="${OUTPUT_DIR}/logs"
