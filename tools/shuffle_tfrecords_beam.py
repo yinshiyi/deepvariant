@@ -8,7 +8,7 @@ To run on AWS using the Spark Runner:
 
 3) Run the following command on your Spark cluster or submit it through EMR:
 
-  python shuffle_tfrecords_beam_spark.py \
+  python tools/shuffle_tfrecords_beam.py \
     --input_pattern_list="s3://YOUR_INPUT_BUCKET/A.tfrecord.gz" \
     --output_pattern_prefix="s3://YOUR_OUTPUT_BUCKET/training.examples" \
     --output_dataset_name="HG001" \
