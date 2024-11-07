@@ -13,10 +13,7 @@ To run on AWS using the Spark Runner:
     --output_pattern_prefix="s3://YOUR_OUTPUT_BUCKET/training.examples" \
     --output_dataset_name="HG001" \
     --runner=SparkRunner \
-    --project=SET_YOUR_AWS_PROJECT_ID_HERE \
-    --region=SET_YOUR_AWS_REGION_HERE \
-    --staging_location=s3://YOUR_BUCKET_NAME/AND_STAGING_DIRECTORY \
-    --temp_location=s3://YOUR_BUCKET_NAME/AND_TEMP_DIRECTORY
+    --region=us-east-1
 
 Make sure the AWS EMR cluster has access to read from and write to S3.
 
@@ -169,7 +166,7 @@ def main(argv=None):
   pipeline_options = PipelineOptions(pipeline_args)
 
   # Ensure AWS-specific Spark configurations
-  pipeline_options.view_as(PipelineOptions).add_experiment('use_s3')
+  # pipeline_options.view_as(PipelineOptions).add_experiment('use_s3')
 
   with beam.Pipeline(options=pipeline_options) as p:
     input_examples = read_from_tfrecords_files(
