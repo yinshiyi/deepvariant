@@ -13,6 +13,7 @@ To run on AWS using the Spark Runner:
     --output_pattern_prefix="s3://YOUR_OUTPUT_BUCKET/training.examples" \
     --output_dataset_name="HG001" \
     --runner=SparkRunner \
+    --spark_master=yarn \
     --region=us-east-1
 
 Make sure the AWS EMR cluster has access to read from and write to S3.
