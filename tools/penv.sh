@@ -7,7 +7,7 @@ pip3 install --upgrade pip
 
 # install the python packages
 pip3 install setuptools --upgrade
-pip3 install apache_beam==2.61.0  # 2.51.0 didn't work in my run.
+pip3 install "apache_beam[aws]==2.61.0"  # 2.51.0 didn't work in my run.
 pip3 install tensorflow==2.18.0  # For parsing tf.Example in shuffle_tfrecords_beam.py.
 
 # package the virtual environment into an archive
