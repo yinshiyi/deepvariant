@@ -12,8 +12,12 @@ class ShuffleRecords(beam.PTransform):
 
 def run(input_tfrecord, output_prefix, output_shards):
     # Define pipeline options
-    options = PipelineOptions()
-    options.view_as(PipelineOptions).job_name = "shuffle-tfrecords"
+    options = PipelineOptions(
+        runner='SparkRunner',
+        spark_master='yarn',
+        temp_location='s3://deepvariant-training-data-shiyi-2024-11/training-case-study/tmp/',  # Replace with your actual S3 path
+        region='us-west-2'  # Specify your AWS region
+    )
 
     # Create the pipeline
     with beam.Pipeline(options=options) as p:
