@@ -17,7 +17,6 @@ def run(input_tfrecord, output_prefix, output_shards):
         spark_master='yarn',
         spark_master='yarn://<yarn-resource-manager>:8088',
         temp_location='s3://deepvariant-training-data-shiyi-2024-11/training-case-study/tmp/',  # Replace with your actual S3 path
-        region='us-west-2'  # Specify your AWS region
     )
 
     # Create the pipeline
