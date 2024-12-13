@@ -1,0 +1,40 @@
+make smaller examples and test running spark locally
+try to read more on why it needs pip access
+
+python tools/beam_test_local.py \
+    --runner=SparkRunner \
+    --spark_master=local[*]
+
+python -m apache_beam.examples.wordcount \
+    --input s3://deepvariant-training-data-shiyi-2024-11/test.py \
+    --output s3://deepvariant-training-data-shiyi-2024-11/wordcount/ \
+    --runner SparkRunner
+
+  spark-submit     --master yarn      \
+   --deploy-mode cluster     \
+  --conf spark.kubernetes.container.image=shiyiyin/shuffle:latest \
+  --conf spark.kubernetes.container.image.pullPolicy=Always \
+  --conf spark.pyspark.python=python3 \
+  --conf spark.pyspark.driver.python=python3 \
+  --conf spark.executorEnv.PYTHONPATH="/usr/local/lib/python3.7/site-packages" \
+   beam_test_local.py     \
+    --input_pattern_list="s3://deepvariant-training-data-shiyi-2024-11/training-case-study/output/training_set.with_label.shuffled-*.gz" \
+    --output_pattern_prefix="s3://deepvariant-training-data-shiyi-2024-11/training-case-study/output/2024_12_emr/training.examples" \
+    --runner=SparkRunner \
+    --spark_master=yarn \
+    --region=us-east-1
+
+
+python -c "import apache_beam as beam; print(beam.__version__)"
+
+python -c "import tensorflow as tf; print(tf.__version__)"
+
+
+ spark-submit     --master yarn      \
+   --deploy-mode cluster     \
+   beam_test_local.py    \
+    --input_pattern_list="s3://deepvariant-training-data-shiyi-2024-11/training-case-study/output/training_set.with_label.shuffled-*.gz" \
+    --output_pattern_prefix="s3://deepvariant-training-data-shiyi-2024-11/training-case-study/output/2024_12_emr/training.examples" \
+    --runner=SparkRunner \
+    --spark_master=yarn \
+    --region=us-east-1
