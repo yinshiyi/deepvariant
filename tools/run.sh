@@ -13,6 +13,9 @@ s3://deepvariant-training-data-shiyi-2024-11/shuffle_tfrecords_beam.py
 --region=us-east-1
   spark-submit     --master yarn      \
    --deploy-mode cluster     \
+    --conf 'spark.archives=s3://deepvariant-training-data-shiyi-2024-11/pyspark_venv.tar.gz#environment' \
+    --conf 'spark.yarn.appMasterEnv.PYSPARK_PYTHON=./environment/bin/python' \
+    --conf 'spark.executorEnv.PYSPARK_PYTHON=./environment/bin/python' \
    shuffle_tfrecords_beam.py     \
     --input_pattern_list="s3://deepvariant-training-data-shiyi-2024-11/training-case-study/output/training_set.with_label.shuffled-?????-of-?????.tfrecord.gz" \
     --output_pattern_prefix="s3://deepvariant-training-data-shiyi-2024-11/training-case-study/output/2024_12_emr/training.examples" \
@@ -28,3 +31,9 @@ python tools/shuffle_tfrecords_beam.py \
   --runner=DirectRunner
 
 sudo -u hadoop yarn logs -applicationId application_1733349531230_0001
+
+#key learning
+serverless EMR could be tested too
+I tried add-step, but I should not use sparkrunner option, becuase I am using spark-submit 
+    --steps Type=Spark,Name="SparkJob",ActionOnFailure=CONTINUE,\
+when I use python script, I could use sparkrunner option
