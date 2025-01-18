@@ -15,7 +15,7 @@ def run(input_tfrecord, output_prefix, output_shards):
     options = PipelineOptions(
         runner='SparkRunner',
         spark_master='yarn',
-        spark_master='yarn://<yarn-resource-manager>:8088',
+        spark_master='yarn://ip-172-31-18-156.ec2.internal:8032',
         temp_location='s3://deepvariant-training-data-shiyi-2024-11/training-case-study/tmp/',  # Replace with your actual S3 path
     )
 
