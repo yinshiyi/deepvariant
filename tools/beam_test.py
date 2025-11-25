@@ -16,6 +16,17 @@ To run on AWS using the Spark Runner:
     --region=us-east-1
 
 """
+import os
+# Print the value of APACHE_BEAM_HOME
+# os.environ['BEAM_TMPDIR'] = '/tmp/apache_beam'
+# os.environ['APACHE_BEAM_HOME'] = '/tmp/apache_beam'
+# os.environ['TMPDIR'] = '/tmp'
+# os.environ['PIP_CACHE_DIR'] = '/tmp/pip_cache'
+
+# # Create directories if they don't exist
+# os.makedirs('/tmp/apache_beam', exist_ok=True)
+# os.makedirs('/tmp/pip_cache', exist_ok=True)
+print("APACHE_BEAM_HOME:", os.environ.get("APACHE_BEAM_HOME", "Not Set"))
 
 import argparse
 import apache_beam as beam
@@ -36,7 +47,7 @@ def run(argv=None):
     with beam.Pipeline(options=pipeline_options) as p:
         # Read input file and prepend "Hello, World!"
         (p
-         | 'ReadInput' >> beam.io.ReadFromText(known_args.input_pattern_list)
+         | 'ReadInput' >> beam.io.ReadFromTFRecord(known_args.input_pattern_list)
          | 'AddHelloWorld' >> beam.Map(lambda x: f"Hello, World! {x}")
          | 'WriteOutput' >> beam.io.WriteToText(known_args.output_pattern_prefix))
 
