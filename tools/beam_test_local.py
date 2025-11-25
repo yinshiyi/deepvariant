@@ -1,11 +1,29 @@
 import os
+# Set TMPDIR to a custom directory
+os.environ['TMPDIR'] = '/mnt/tmp/apache_beam'
+os.environ['BEAM_TMP_DIR'] = '/mnt/tmp/apache_beam'
+os.environ['BEAM_HOME'] = '/mnt/tmp/apache_beam'
+print("BEAM_TMP_DIR:", os.environ.get("BEAM_TMP_DIR", "Not Set"))
+print("TMPDIR:", os.environ.get("TMPDIR", "Not Set"))
+
+
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 import argparse
 import boto3
 
+input_pattern_prefix = "s3://deepvariant-training-data-shiyi-2024-11/training-case-study/output/validation_set.with_label.tfrecord*.gz"
+
+# Define your custom pipeline options
+options = PipelineOptions(
+    flags=['--temp_location', '/mnt/tmp/apache_beam']
+)
+
+with beam.Pipeline(options=options) as p:
+    # Your Beam pipeline code here
+    p | 'Read' >> beam.io.ReadFromTFRecord(input_pattern_prefix)  # Example operation
 # Setup boto3 client
-session = boto3.Session(profile_name='gpu')
+session = boto3.Session()
 s3_client = session.client('s3')
 
 # Specify the bucket and the prefix (path to your folder)
@@ -36,6 +54,7 @@ def run():
     # Set pipeline options
     pipeline_args = [
         '--runner=SparkRunner',
+        '--temp_location=/mnt/tmp/apache_beam',
         '--spark_master=local[*]'  # Use all available cores
     ]
     
