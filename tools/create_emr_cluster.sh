@@ -1,0 +1,14 @@
+aws emr create-cluster \
+ --name "My cluster" \
+ --log-uri "s3://aws-logs-940583394710-us-east-1/elasticmapreduce" \
+ --release-label "emr-7.5.0" \
+ --service-role "arn:aws:iam::940583394710:role/EMR-default" \
+ --unhealthy-node-replacement \
+ --ec2-attributes '{"InstanceProfile":"ecsInstanceRole","EmrManagedMasterSecurityGroup":"sg-06aa995e5453d60e6","EmrManagedSlaveSecurityGroup":"sg-073b0c53976a0cae7","AdditionalMasterSecurityGroups":["sg-0b734813083db4ba2"],"AdditionalSlaveSecurityGroups":[],"SubnetId":"subnet-0ce2d946"}' \
+ --applications Name=Hadoop Name=Hive Name=JupyterEnterpriseGateway Name=Livy Name=Spark \
+ --instance-groups '[{"InstanceCount":1,"InstanceGroupType":"CORE","Name":"Core","InstanceType":"m5.xlarge","EbsConfiguration":{"EbsBlockDeviceConfigs":[{"VolumeSpecification":{"VolumeType":"gp2","SizeInGB":32},"VolumesPerInstance":2}]}},{"InstanceCount":1,"InstanceGroupType":"TASK","Name":"Task - 1","InstanceType":"m5.xlarge","EbsConfiguration":{"EbsBlockDeviceConfigs":[{"VolumeSpecification":{"VolumeType":"gp2","SizeInGB":32},"VolumesPerInstance":2}]}},{"InstanceCount":1,"InstanceGroupType":"MASTER","Name":"Primary","InstanceType":"m5.xlarge","EbsConfiguration":{"EbsBlockDeviceConfigs":[{"VolumeSpecification":{"VolumeType":"gp2","SizeInGB":32},"VolumesPerInstance":2}]}}]' \
+ --bootstrap-actions '[{"Args":[],"Name":"setup","Path":"s3://deepvariant-training-data-shiyi-2024-11/setup2.sh"}]' \
+ --scale-down-behavior "TERMINATE_AT_TASK_COMPLETION" \
+ --auto-termination-policy '{"IdleTimeout":3600}' \
+ --region "us-east-1" \
+ --profile gpu
